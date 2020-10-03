@@ -1,0 +1,7 @@
+include ':data'
+include ':features:numbers-trivia'
+include ':shared'
+include ':domain'
+include ':app'
+
+rootProject.name = "NumberTrivia"
