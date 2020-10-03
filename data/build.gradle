@@ -37,5 +37,5 @@ dependencies {
 
     testImplementation "junit:junit:4.13"
     testImplementation "io.mockk:mockk:1.9.2"
-    testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'com.google.truth:truth:1.0.1'
 }

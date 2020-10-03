@@ -6,11 +6,10 @@ import br.com.andretortolano.data.sources.LocalSource
 import br.com.andretortolano.data.sources.RemoteSource
 import br.com.andretortolano.domain.entities.NumberTrivia
 import br.com.andretortolano.domain.gateway.NumberTriviaGateway
+import com.google.common.truth.Truth.assertThat
 import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.junit.Before
 import org.junit.Test
 
@@ -32,7 +31,7 @@ class NumberTriviaRepositoryTest {
 
     @Test
     fun `SHOULD implement NumberTriviaGateway from domain`() {
-        assertThat(repository, Matchers.instanceOf(NumberTriviaGateway::class.java))
+        assertThat(repository).isInstanceOf(NumberTriviaGateway::class.java)
     }
 
     @Test
@@ -47,8 +46,8 @@ class NumberTriviaRepositoryTest {
         // When
         val result = repository.getConcreteNumberTrivia(number)
         // Then
-        assertThat(result.error, Matchers.equalTo(null))
-        assertThat(result.value, Matchers.equalTo(NumberTrivia(number, trivia)))
+        assertThat(result.error).isNull()
+        assertThat(result.value).isEqualTo(NumberTrivia(number, trivia))
     }
 
     @Test
@@ -61,8 +60,8 @@ class NumberTriviaRepositoryTest {
         // When
         val result = repository.getConcreteNumberTrivia(number)
         // Then
-        assertThat(result.error, Matchers.equalTo(null))
-        assertThat(result.value, Matchers.equalTo(NumberTrivia(number, trivia)))
+        assertThat(result.error).isNull()
+        assertThat(result.value).isEqualTo(NumberTrivia(number, trivia))
     }
 
     @Test
@@ -93,8 +92,8 @@ class NumberTriviaRepositoryTest {
         // When
         val result = repository.getRandomNumberTrivia()
         // Then
-        assertThat(result.error, Matchers.equalTo(null))
-        assertThat(result.value, Matchers.equalTo(NumberTrivia(number, trivia)))
+        assertThat(result.error).isNull()
+        assertThat(result.value).isEqualTo(NumberTrivia(number, trivia))
     }
 
     @Test
