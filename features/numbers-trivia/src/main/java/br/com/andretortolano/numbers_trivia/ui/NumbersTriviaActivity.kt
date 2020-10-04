@@ -8,8 +8,10 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.com.andretortolano.data.repositories.NumberTriviaRepository
+import br.com.andretortolano.data.sources.DefaultRemoteSource
 import br.com.andretortolano.data.sources.FakeLocalSource
 import br.com.andretortolano.data.sources.FakeRemoteSource
+import br.com.andretortolano.data.sources.retrofit.RetrofitApiManager
 import br.com.andretortolano.domain.usecases.GetConcreteNumberTrivia
 import br.com.andretortolano.domain.usecases.GetRandomNumberTrivia
 import br.com.andretortolano.numbers_trivia.R
@@ -36,7 +38,7 @@ class NumbersTriviaActivity : AppCompatActivity() {
         _binding = NumbersTriviaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val repository = NumberTriviaRepository(FakeRemoteSource(), FakeLocalSource())
+        val repository = NumberTriviaRepository(DefaultRemoteSource(RetrofitApiManager.numberTriviaInstance), FakeLocalSource())
         val model = NumbersTriviaModel(
             GetConcreteNumberTrivia(repository),
             GetRandomNumberTrivia(repository)
