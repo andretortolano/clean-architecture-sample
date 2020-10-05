@@ -10,7 +10,7 @@ class RetrofitRemoteSource(private val api: NumberTriviaRetrofit) : RemoteSource
     override fun getConcreteNumberTrivia(number: Int): NumberTriviaModel {
         api.getConcreteNumberTrivia(number).execute().run {
             return body().let {
-                it?.toModel() ?: throw RemoteException.NotFoundException
+                it?.toModel() ?: throw RemoteException.UnknownRemoteException
             }
         }
     }
@@ -18,7 +18,7 @@ class RetrofitRemoteSource(private val api: NumberTriviaRetrofit) : RemoteSource
     override fun getRandomNumberTrivia(): NumberTriviaModel {
         api.getRandomNumberTrivia().execute().run {
             return body().let {
-                it?.toModel() ?: throw RemoteException.NotFoundException
+                it?.toModel() ?: throw RemoteException.UnknownRemoteException
             }
         }
     }

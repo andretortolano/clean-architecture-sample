@@ -1,7 +1,6 @@
-package br.com.andretortolano.data
+package br.com.andretortolano.data.repositories
 
 import br.com.andretortolano.data.models.NumberTriviaModel
-import br.com.andretortolano.data.repositories.NumberTriviaRepository
 import br.com.andretortolano.data.sources.local.LocalSource
 import br.com.andretortolano.data.sources.remote.RemoteSource
 import br.com.andretortolano.domain.gateway.NumberTriviaGateway

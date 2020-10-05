@@ -1,5 +1,6 @@
 package br.com.andretortolano.data.repositories
 
+import br.com.andretortolano.data.exceptions.RemoteException
 import br.com.andretortolano.data.models.NumberTriviaModel
 import br.com.andretortolano.data.sources.local.LocalSource
 import br.com.andretortolano.data.sources.remote.RemoteSource

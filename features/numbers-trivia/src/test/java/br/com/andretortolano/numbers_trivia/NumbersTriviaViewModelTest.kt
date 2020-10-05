@@ -3,6 +3,7 @@ package br.com.andretortolano.numbers_trivia
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import br.com.andretortolano.data.exceptions.RemoteException
 import br.com.andretortolano.domain.entity.NumberTriviaEntity
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaModel
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaViewModel
@@ -133,5 +134,21 @@ class NumbersTriviaViewModelTest {
             assertThat(numberTrivia.number).isEqualTo(number)
             assertThat(numberTrivia.trivia).isEqualTo(trivia)
         }
+    }
+
+    @Test
+    fun `SHOULD emmit SomethingWentWrong state WHEN handling RemoteException_NoConnectivityException`() {
+        // When
+        viewModel.handleRemoteException(RemoteException.NoConnectivityException)
+        // Then
+        assertThat(stateList[1]).isInstanceOf(ViewState.SomethingWentWrong::class.java)
+    }
+
+    @Test
+    fun `SHOULD emmit SomethingWentWrong state WHEN handling RemoteException_UnknownException`() = runBlockingTest {
+        // When
+        viewModel.handleRemoteException(RemoteException.UnknownRemoteException)
+        // Then
+        assertThat(stateList[1]).isInstanceOf(ViewState.SomethingWentWrong::class.java)
     }
 }

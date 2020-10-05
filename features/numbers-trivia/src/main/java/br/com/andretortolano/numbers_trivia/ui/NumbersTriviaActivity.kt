@@ -36,7 +36,7 @@ class NumbersTriviaActivity : AppCompatActivity() {
         _binding = NumbersTriviaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val repository = NumberTriviaRepository(RetrofitRemoteSource(RetrofitApiManager.numberTriviaInstance), FakeLocalSource())
+        val repository = NumberTriviaRepository(RetrofitRemoteSource(RetrofitApiManager.getInstance(applicationContext)), FakeLocalSource())
         val model = NumbersTriviaModel(
             GetNumberTrivia(repository),
             GetRandomNumberTrivia(repository)
@@ -85,5 +85,7 @@ class NumbersTriviaActivity : AppCompatActivity() {
 
     private fun renderNotFoundState() {
         binding.trivia.text = getString(R.string.no_trivia_found)
+        binding.trivia.visibility = View.VISIBLE
+        binding.triviaLoader.visibility = View.GONE
     }
 }
