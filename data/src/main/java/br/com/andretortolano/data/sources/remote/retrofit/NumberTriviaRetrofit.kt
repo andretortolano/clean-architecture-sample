@@ -1,4 +1,4 @@
-package br.com.andretortolano.data.sources.retrofit
+package br.com.andretortolano.data.sources.remote.retrofit
 
 import retrofit2.Call
 import retrofit2.http.GET

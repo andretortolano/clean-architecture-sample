@@ -3,17 +3,15 @@ package br.com.andretortolano.numbers_trivia.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.com.andretortolano.data.repositories.NumberTriviaRepository
-import br.com.andretortolano.data.sources.DefaultRemoteSource
-import br.com.andretortolano.data.sources.FakeLocalSource
-import br.com.andretortolano.data.sources.FakeRemoteSource
-import br.com.andretortolano.data.sources.retrofit.RetrofitApiManager
-import br.com.andretortolano.domain.usecases.GetConcreteNumberTrivia
-import br.com.andretortolano.domain.usecases.GetRandomNumberTrivia
+import br.com.andretortolano.data.sources.local.FakeLocalSource
+import br.com.andretortolano.data.sources.remote.RetrofitRemoteSource
+import br.com.andretortolano.data.sources.remote.retrofit.RetrofitApiManager
+import br.com.andretortolano.domain.usecase.GetNumberTrivia
+import br.com.andretortolano.domain.usecase.GetRandomNumberTrivia
 import br.com.andretortolano.numbers_trivia.R
 import br.com.andretortolano.numbers_trivia.databinding.NumbersTriviaBinding
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaModel
@@ -38,9 +36,9 @@ class NumbersTriviaActivity : AppCompatActivity() {
         _binding = NumbersTriviaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val repository = NumberTriviaRepository(DefaultRemoteSource(RetrofitApiManager.numberTriviaInstance), FakeLocalSource())
+        val repository = NumberTriviaRepository(RetrofitRemoteSource(RetrofitApiManager.numberTriviaInstance), FakeLocalSource())
         val model = NumbersTriviaModel(
-            GetConcreteNumberTrivia(repository),
+            GetNumberTrivia(repository),
             GetRandomNumberTrivia(repository)
         )
 
@@ -80,7 +78,7 @@ class NumbersTriviaActivity : AppCompatActivity() {
     }
 
     private fun renderFoundState(state: NumbersTriviaViewModel.ViewState.NumberTriviaFound) {
-        binding.trivia.text = state.numberTrivia.triviaText
+        binding.trivia.text = state.numberTrivia.trivia
         binding.trivia.visibility = View.VISIBLE
         binding.triviaLoader.visibility = View.GONE
     }

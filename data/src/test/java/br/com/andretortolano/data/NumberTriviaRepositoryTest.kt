@@ -2,9 +2,8 @@ package br.com.andretortolano.data
 
 import br.com.andretortolano.data.models.NumberTriviaModel
 import br.com.andretortolano.data.repositories.NumberTriviaRepository
-import br.com.andretortolano.data.sources.LocalSource
-import br.com.andretortolano.data.sources.RemoteSource
-import br.com.andretortolano.domain.entities.NumberTrivia
+import br.com.andretortolano.data.sources.local.LocalSource
+import br.com.andretortolano.data.sources.remote.RemoteSource
 import br.com.andretortolano.domain.gateway.NumberTriviaGateway
 import com.google.common.truth.Truth.assertThat
 import io.mockk.*
@@ -38,43 +37,46 @@ class NumberTriviaRepositoryTest {
     fun `SHOULD get specific NumberTrivia from remote WHEN requesting a new number`() {
         // Given
         val number = 1
-        val trivia = "number 1 trivia"
-        val expectedNumberTrivia = NumberTriviaModel(number, trivia)
+        val numberTrivia = NumberTriviaModel(number.toBigInteger(), "trivia", true)
         every { localSource.getNumberTrivia(number) } returns null
-        every { remoteSource.getConcreteNumberTrivia(number) } returns expectedNumberTrivia
-        every { localSource.saveNumberTrivia(expectedNumberTrivia) } just Runs
+        every { remoteSource.getConcreteNumberTrivia(number) } returns numberTrivia
+        every { localSource.saveNumberTrivia(numberTrivia) } just Runs
         // When
-        val result = repository.getConcreteNumberTrivia(number)
+        val result = repository.getNumberTrivia(number)
         // Then
-        assertThat(result.error).isNull()
-        assertThat(result.value).isEqualTo(NumberTrivia(number, trivia))
+        result.also {
+            assertThat(it.number).isEqualTo(numberTrivia.number)
+            assertThat(it.trivia).isEqualTo(numberTrivia.trivia)
+            assertThat(it.found).isEqualTo(numberTrivia.found)
+        }
     }
 
     @Test
     fun `SHOULD get specific NumberTrivia from local WHEN requesting a saved number`() {
         // Given
         val number = 1
-        val trivia = "number 1 trivia"
-        val expectedNumberTrivia = NumberTriviaModel(number, trivia)
-        every { localSource.getNumberTrivia(number) } returns expectedNumberTrivia
+        val numberTrivia = NumberTriviaModel(number.toBigInteger(), "trivia", true)
+        every { localSource.getNumberTrivia(number) } returns numberTrivia
         // When
-        val result = repository.getConcreteNumberTrivia(number)
+        val result = repository.getNumberTrivia(number)
         // Then
-        assertThat(result.error).isNull()
-        assertThat(result.value).isEqualTo(NumberTrivia(number, trivia))
+        result.also {
+            assertThat(it.number).isEqualTo(numberTrivia.number)
+            assertThat(it.trivia).isEqualTo(numberTrivia.trivia)
+            assertThat(it.found).isEqualTo(numberTrivia.found)
+        }
     }
 
     @Test
     fun `SHOULD save to local WHEN getting from remote`() {
         // Given
         val number = 1
-        val trivia = "new number 1 - new trivia"
-        val expectedNumberTrivia = NumberTriviaModel(number, trivia)
+        val expectedNumberTrivia = NumberTriviaModel(number.toBigInteger(), "trivia", true)
         every { localSource.getNumberTrivia(number) } returns null
         every { remoteSource.getConcreteNumberTrivia(number) } returns expectedNumberTrivia
         every { localSource.saveNumberTrivia(expectedNumberTrivia) } just Runs
         // When
-        repository.getConcreteNumberTrivia(number)
+        repository.getNumberTrivia(number)
         // Then
         verify(exactly = 1) {
             localSource.saveNumberTrivia(expectedNumberTrivia)
@@ -84,24 +86,24 @@ class NumberTriviaRepositoryTest {
     @Test
     fun `SHOULD get random NumberTrivia from remote`() {
         // Given
-        val number = 1337
-        val trivia = "trivia random number 1337"
-        val randomNumberTrivia = NumberTriviaModel(number, trivia)
+        val randomNumberTrivia = NumberTriviaModel(1337.toBigInteger(), "trivia", true)
         every { remoteSource.getRandomNumberTrivia() } returns randomNumberTrivia
         every { localSource.saveNumberTrivia(randomNumberTrivia) } just Runs
         // When
         val result = repository.getRandomNumberTrivia()
         // Then
-        assertThat(result.error).isNull()
-        assertThat(result.value).isEqualTo(NumberTrivia(number, trivia))
+        result.also {
+            assertThat(it.number).isEqualTo(randomNumberTrivia.number)
+            assertThat(it.trivia).isEqualTo(randomNumberTrivia.trivia)
+            assertThat(it.found).isEqualTo(randomNumberTrivia.found)
+        }
     }
 
     @Test
     fun `SHOULD save random NumberTrivia WHEN getting from remote`() {
         // Given
         val number = 1337
-        val trivia = "trivia random number 1337"
-        val randomNumberTrivia = NumberTriviaModel(number, trivia)
+        val randomNumberTrivia = NumberTriviaModel(number.toBigInteger(), "trivia", true)
         every { remoteSource.getRandomNumberTrivia() } returns randomNumberTrivia
         every { localSource.saveNumberTrivia(randomNumberTrivia) } just Runs
         // When

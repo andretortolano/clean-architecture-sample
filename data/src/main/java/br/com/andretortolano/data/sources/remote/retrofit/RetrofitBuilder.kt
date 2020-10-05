@@ -1,4 +1,4 @@
-package br.com.andretortolano.data.sources.retrofit
+package br.com.andretortolano.data.sources.remote.retrofit
 
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient

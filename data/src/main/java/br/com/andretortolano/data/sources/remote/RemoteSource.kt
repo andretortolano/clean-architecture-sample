@@ -1,4 +1,4 @@
-package br.com.andretortolano.data.sources
+package br.com.andretortolano.data.sources.remote
 
 import br.com.andretortolano.data.models.NumberTriviaModel
 

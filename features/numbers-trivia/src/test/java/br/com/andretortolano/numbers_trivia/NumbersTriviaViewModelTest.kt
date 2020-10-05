@@ -3,9 +3,7 @@ package br.com.andretortolano.numbers_trivia
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import br.com.andretortolano.domain.entities.NumberTrivia
-import br.com.andretortolano.domain.usecases.GetConcreteNumberTrivia
-import br.com.andretortolano.domain.usecases.GetRandomNumberTrivia
+import br.com.andretortolano.domain.entity.NumberTriviaEntity
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaModel
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaViewModel
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaViewModel.ViewState
@@ -76,8 +74,7 @@ class NumbersTriviaViewModelTest {
     @Test
     fun `SHOULD emmit Loading state WHEN searching any number trivia`() = runBlockingTest {
         // Given
-        coEvery { model.getConcreteNumberTriviaUseCase(any()) } returns
-                mockk<GetConcreteNumberTrivia.GetConcreteNumberTriviaResponse.Success>(relaxed = true)
+        coEvery { model.getConcreteNumberTriviaUseCase(any()) } returns mockk(relaxed = true)
         // When
         viewModel.searchNumberTrivia(1)
         // Then
@@ -88,24 +85,34 @@ class NumbersTriviaViewModelTest {
     fun `SHOULD emmit NumberTriviaFound state WITH correct NumberTrivia WHEN searching any number trivia`() = runBlockingTest {
         // Given
         val number = 20
-        val trivia = "trivia for number 20"
-        val expectedNumberTrivia = NumberTrivia(number, trivia)
-        coEvery { model.getConcreteNumberTriviaUseCase(any()) } returns
-                GetConcreteNumberTrivia.GetConcreteNumberTriviaResponse.Success(expectedNumberTrivia)
+        val trivia = "trivia"
+        val numberTrivia = NumberTriviaEntity(number.toBigInteger(), trivia, true)
+        coEvery { model.getConcreteNumberTriviaUseCase(number) } returns numberTrivia
         // When
         viewModel.searchNumberTrivia(number)
         // Then
         (stateList[2] as ViewState.NumberTriviaFound).run {
-            assertThat(numberTrivia.number).isEqualTo(number)
-            assertThat(numberTrivia.triviaText).isEqualTo(trivia)
+            assertThat(numberTrivia.number).isEqualTo(number.toBigInteger())
+            assertThat(numberTrivia.trivia).isEqualTo(trivia)
         }
+    }
+
+    @Test
+    fun `SHOULD emmit NumberTriviaNotFound state WHEN entity is marked as not found`() = runBlockingTest {
+        // Given
+        val number = 20
+        val numberTrivia = NumberTriviaEntity(number.toBigInteger(), " ", false)
+        coEvery { model.getConcreteNumberTriviaUseCase(number) } returns numberTrivia
+        // When
+        viewModel.searchNumberTrivia(number)
+        // Then
+        assertThat(stateList[2]).isInstanceOf(ViewState.NumberTriviaNotFound::class.java)
     }
 
     @Test
     fun `SHOULD emmit Loading state WHEN searching for random number trivia`() = runBlockingTest {
         // Given
-        coEvery { model.getRandomNumberTriviaUseCase() } returns
-                mockk<GetRandomNumberTrivia.GetRandomNumberTriviaResponse.Success>(relaxed = true)
+        coEvery { model.getRandomNumberTriviaUseCase() } returns mockk(relaxed = true)
         // When
         viewModel.searchRandomTrivia()
         // Then
@@ -115,17 +122,16 @@ class NumbersTriviaViewModelTest {
     @Test
     fun `SHOULD emmit NumberTriviaFound state WITH correct NumberTrivia WHEN searching for random number trivia`() = runBlockingTest {
         // Given
-        val number = 20
-        val trivia = "trivia for number 20"
-        val expectedNumberTrivia = NumberTrivia(number, trivia)
-        coEvery { model.getRandomNumberTriviaUseCase() } returns
-                GetRandomNumberTrivia.GetRandomNumberTriviaResponse.Success(expectedNumberTrivia)
+        val number = 20.toBigInteger()
+        val trivia = "trivia"
+        val numberTrivia = NumberTriviaEntity(number, trivia, true)
+        coEvery { model.getRandomNumberTriviaUseCase() } returns numberTrivia
         // When
         viewModel.searchRandomTrivia()
         // Then
         (stateList[2] as ViewState.NumberTriviaFound).run {
             assertThat(numberTrivia.number).isEqualTo(number)
-            assertThat(numberTrivia.triviaText).isEqualTo(trivia)
+            assertThat(numberTrivia.trivia).isEqualTo(trivia)
         }
     }
 }

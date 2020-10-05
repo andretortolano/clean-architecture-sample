@@ -4,9 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.com.andretortolano.domain.entities.NumberTrivia
-import br.com.andretortolano.domain.usecases.GetConcreteNumberTrivia
-import br.com.andretortolano.domain.usecases.GetRandomNumberTrivia
+import br.com.andretortolano.domain.entity.NumberTriviaEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -15,7 +13,7 @@ class NumbersTriviaViewModel(private val model: NumbersTriviaModel) : ViewModel(
     sealed class ViewState {
         object Idle : ViewState()
         object Loading : ViewState()
-        data class NumberTriviaFound(val numberTrivia: NumberTrivia) : ViewState()
+        data class NumberTriviaFound(val numberTrivia: NumberTriviaEntity) : ViewState()
         object NumberTriviaNotFound : ViewState()
     }
 
@@ -29,11 +27,10 @@ class NumbersTriviaViewModel(private val model: NumbersTriviaModel) : ViewModel(
             _state.value = ViewState.Loading
 
             _state.value = model.getConcreteNumberTriviaUseCase(number).run {
-                when (this) {
-                    is GetConcreteNumberTrivia.GetConcreteNumberTriviaResponse.Success ->
-                        ViewState.NumberTriviaFound(numberTrivia)
-                    GetConcreteNumberTrivia.GetConcreteNumberTriviaResponse.NoTriviaFoundError ->
-                        ViewState.NumberTriviaNotFound
+                if (found) {
+                    ViewState.NumberTriviaFound(this)
+                } else {
+                    ViewState.NumberTriviaNotFound
                 }
             }
         }
@@ -44,11 +41,10 @@ class NumbersTriviaViewModel(private val model: NumbersTriviaModel) : ViewModel(
             _state.value = ViewState.Loading
 
             _state.value = model.getRandomNumberTriviaUseCase().run {
-                when(this) {
-                    is GetRandomNumberTrivia.GetRandomNumberTriviaResponse.Success ->
-                        ViewState.NumberTriviaFound(numberTrivia)
-                    GetRandomNumberTrivia.GetRandomNumberTriviaResponse.NoTriviaFoundError ->
-                        ViewState.NumberTriviaNotFound
+                if (found) {
+                    ViewState.NumberTriviaFound(this)
+                } else {
+                    ViewState.NumberTriviaNotFound
                 }
             }
         }

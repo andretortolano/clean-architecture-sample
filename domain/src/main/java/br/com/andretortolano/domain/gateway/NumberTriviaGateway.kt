@@ -1,9 +1,8 @@
 package br.com.andretortolano.domain.gateway
 
-import br.com.andretortolano.domain.entities.NumberTrivia
+import br.com.andretortolano.domain.entity.NumberTriviaEntity
 
 interface NumberTriviaGateway {
-    fun getConcreteNumberTrivia(number: Int): GatewayResponse<NumberTrivia>
-
-    fun getRandomNumberTrivia(): GatewayResponse<NumberTrivia>
+    fun getNumberTrivia(number: Int): NumberTriviaEntity
+    fun getRandomNumberTrivia() : NumberTriviaEntity
 }

@@ -1,3 +1,5 @@
 package br.com.andretortolano.data.models
 
-data class NumberTriviaModel(val number: Int, val trivia: String)
+import java.math.BigInteger
+
+data class NumberTriviaModel(val number: BigInteger, val trivia: String, val found: Boolean)
