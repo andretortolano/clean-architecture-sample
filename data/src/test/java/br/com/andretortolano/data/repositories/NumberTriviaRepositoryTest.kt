@@ -15,6 +15,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Test
+import java.net.UnknownHostException
 
 class NumberTriviaRepositoryTest {
 
@@ -38,11 +39,10 @@ class NumberTriviaRepositoryTest {
     }
 
     @Test
-    fun `getNumberTrivia SHOULD get from remote WHEN requesting a new number`() {
+    fun `getNumberTrivia SHOULD always get from remote`() {
         // Given
         val number = 1L
         val numberTrivia = NumberTriviaModel(number, "trivia")
-        every { localSource.getNumberTrivia(number) } returns null
         every { remoteSource.getConcreteNumberTrivia(number) } returns numberTrivia
         every { localSource.saveNumberTrivia(numberTrivia) } just Runs
         // When
@@ -55,11 +55,12 @@ class NumberTriviaRepositoryTest {
     }
 
     @Test
-    fun `getNumberTrivia SHOULD get from local WHEN requesting a saved number`() {
+    fun `getNumberTrivia SHOULD get from local WHEN remote throws NoConnectivityException`() {
         // Given
         val number = 1L
         val numberTrivia = NumberTriviaModel(number, "trivia")
         every { localSource.getNumberTrivia(number) } returns numberTrivia
+        every { remoteSource.getConcreteNumberTrivia(number) } throws NoConnectivityException()
         // When
         val result = repository.getNumberTrivia(number)
         // Then
@@ -70,11 +71,37 @@ class NumberTriviaRepositoryTest {
     }
 
     @Test
+    fun `getNumberTrivia SHOULD return ErrorEntity_NoConnectivity WHEN remote throws NoConnectivityException AND local model is null`() {
+        // Given
+        val number = 1L
+        every { localSource.getNumberTrivia(number) } returns null
+        every { remoteSource.getConcreteNumberTrivia(number) } throws NoConnectivityException()
+        // When
+        val result = repository.getNumberTrivia(number)
+        // Then
+        (result as EntityResult.Error<NumberTriviaEntity>).also {
+            assertThat(it.error).isInstanceOf(ErrorEntity.NoConnectivity::class.java)
+        }
+    }
+
+    @Test
+    fun `getNumberTrivia SHOULD return ErrorEntity_NotFound WHEN remote throws NotFoundException`() {
+        // Given
+        val number = 1L
+        every { remoteSource.getConcreteNumberTrivia(number) } throws NotFoundException()
+        // When
+        val result = repository.getNumberTrivia(number)
+        // Then
+        (result as EntityResult.Error<NumberTriviaEntity>).also {
+            assertThat(it.error).isInstanceOf(ErrorEntity.NotFound::class.java)
+        }
+    }
+
+    @Test
     fun `getNumberTrivia SHOULD save to local WHEN getting from remote`() {
         // Given
         val number = 1L
         val expectedNumberTrivia = NumberTriviaModel(number, "trivia")
-        every { localSource.getNumberTrivia(number) } returns null
         every { remoteSource.getConcreteNumberTrivia(number) } returns expectedNumberTrivia
         every { localSource.saveNumberTrivia(expectedNumberTrivia) } just Runs
         // When
@@ -82,32 +109,6 @@ class NumberTriviaRepositoryTest {
         // Then
         verify(exactly = 1) {
             localSource.saveNumberTrivia(expectedNumberTrivia)
-        }
-    }
-
-    @Test
-    fun `getNumberTrivia SHOULD return error WHEN catching NoConnectivityException`() {
-        // Given
-        every { localSource.getNumberTrivia(any()) } returns null
-        every { remoteSource.getConcreteNumberTrivia(any()) } throws NoConnectivityException()
-        // When
-        val result = repository.getNumberTrivia(1)
-        // Then
-        (result as EntityResult.Error).also {
-            assertThat(it.error).isInstanceOf(ErrorEntity.NoConnectivity::class.java)
-        }
-    }
-
-    @Test
-    fun `getNumberTrivia SHOULD return error WHEN catching NotFoundException`() {
-        // Given
-        every { localSource.getNumberTrivia(any()) } returns null
-        every { remoteSource.getConcreteNumberTrivia(any()) } throws NotFoundException()
-        // When
-        val result = repository.getNumberTrivia(1)
-        // Then
-        (result as EntityResult.Error).also {
-            assertThat(it.error).isInstanceOf(ErrorEntity.NotFound::class.java)
         }
     }
 
@@ -135,7 +136,7 @@ class NumberTriviaRepositoryTest {
         every { remoteSource.getRandomNumberTrivia() } returns randomNumberTrivia
         every { localSource.saveNumberTrivia(randomNumberTrivia) } just Runs
         // When
-        repository.getRandomNumberTrivia()
+        val result = repository.getRandomNumberTrivia()
         // Then
         verify(exactly = 1) {
             localSource.saveNumberTrivia(randomNumberTrivia)
@@ -143,7 +144,7 @@ class NumberTriviaRepositoryTest {
     }
 
     @Test
-    fun `getRandomNumberTrivia SHOULD return error WHEN catching NoConnectivityException`() {
+    fun `getRandomNumberTrivia SHOULD return ErrorEntity_NoConnectivity WHEN remote throws NoConnectivityException`() {
         // Given
         every { remoteSource.getRandomNumberTrivia() } throws NoConnectivityException()
         // When
@@ -155,7 +156,7 @@ class NumberTriviaRepositoryTest {
     }
 
     @Test
-    fun `getRandomNumberTrivia SHOULD return error WHEN catching NotFoundException`() {
+    fun `getRandomNumberTrivia SHOULD return ErrorEntity_NotFound WHEN remote throws NotFoundException`() {
         // Given
         every { remoteSource.getRandomNumberTrivia() } throws NotFoundException()
         // When
@@ -165,5 +166,44 @@ class NumberTriviaRepositoryTest {
             assertThat(it.error).isInstanceOf(ErrorEntity.NotFound::class.java)
         }
     }
+
+//    @Test
+//    fun `getRandomNumberTrivia SHOULD save to local WHEN getting from remote`() {
+//        // Given
+//        val number = 1337L
+//        val randomNumberTrivia = NumberTriviaModel(number, "trivia")
+//        every { remoteSource.getRandomNumberTrivia() } returns randomNumberTrivia
+//        every { localSource.saveNumberTrivia(randomNumberTrivia) } just Runs
+//        // When
+//        repository.getRandomNumberTrivia()
+//        // Then
+//        verify(exactly = 1) {
+//            localSource.saveNumberTrivia(randomNumberTrivia)
+//        }
+//    }
+//
+//    @Test
+//    fun `getRandomNumberTrivia SHOULD return error WHEN catching NoConnectivityException`() {
+//        // Given
+//        every { remoteSource.getRandomNumberTrivia() } throws NoConnectivityException()
+//        // When
+//        val result = repository.getRandomNumberTrivia()
+//        // Then
+//        (result as EntityResult.Error).also {
+//            assertThat(it.error).isInstanceOf(ErrorEntity.NoConnectivity::class.java)
+//        }
+//    }
+//
+//    @Test
+//    fun `getRandomNumberTrivia SHOULD return error WHEN catching NotFoundException`() {
+//        // Given
+//        every { remoteSource.getRandomNumberTrivia() } throws NotFoundException()
+//        // When
+//        val result = repository.getRandomNumberTrivia()
+//        // Then
+//        (result as EntityResult.Error).also {
+//            assertThat(it.error).isInstanceOf(ErrorEntity.NotFound::class.java)
+//        }
+//    }
 }
 

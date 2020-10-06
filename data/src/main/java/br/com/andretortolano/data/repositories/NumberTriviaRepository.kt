@@ -13,43 +13,35 @@ import br.com.andretortolano.domain.gateway.NumberTriviaGateway
 class NumberTriviaRepository(private val remote: RemoteSource, private val local: LocalSource) : NumberTriviaGateway {
 
     override fun getNumberTrivia(number: Long): EntityResult<NumberTriviaEntity> {
-        return getNumberTriviaFromLocal(number) ?: getNumberTriviaFromRemote(number)
-    }
-
-    private fun getNumberTriviaFromLocal(number: Long): EntityResult<NumberTriviaEntity>? {
-        return local.getNumberTrivia(number)?.let {
-            EntityResult.Success(it.toEntity())
-        }
-    }
-
-    private fun getNumberTriviaFromRemote(number: Long): EntityResult<NumberTriviaEntity> {
         return try {
-            remote.getConcreteNumberTrivia(number).run {
-                local.saveNumberTrivia(this)
-                EntityResult.Success(toEntity())
-            }
+            remote.getConcreteNumberTrivia(number).save()
         } catch (e: NoConnectivityException) {
-            EntityResult.Error(ErrorEntity.NoConnectivity)
+            local.getNumberTrivia(number).toSuccessOrError(ErrorEntity.NoConnectivity)
         } catch (e: NotFoundException) {
             EntityResult.Error(ErrorEntity.NotFound)
         }
     }
 
     override fun getRandomNumberTrivia(): EntityResult<NumberTriviaEntity> {
-        return getRandomNumberTriviaFromRemote()
-    }
-
-    private fun getRandomNumberTriviaFromRemote(): EntityResult<NumberTriviaEntity> {
         return try {
-            remote.getRandomNumberTrivia().run {
-                local.saveNumberTrivia(this)
-                EntityResult.Success(toEntity())
-            }
+            remote.getRandomNumberTrivia().save()
         } catch (e: NoConnectivityException) {
             EntityResult.Error(ErrorEntity.NoConnectivity)
         } catch (e: NotFoundException) {
             EntityResult.Error(ErrorEntity.NotFound)
         }
+    }
+
+    private fun NumberTriviaModel.save(): EntityResult<NumberTriviaEntity> {
+        local.saveNumberTrivia(this)
+        return EntityResult.Success(toEntity())
+    }
+
+    private fun NumberTriviaModel?.toSuccessOrError(error: ErrorEntity): EntityResult<NumberTriviaEntity> {
+        return if (this != null)
+            EntityResult.Success(toEntity())
+        else
+            EntityResult.Error(error)
     }
 
     private fun NumberTriviaModel.toEntity(): NumberTriviaEntity = NumberTriviaEntity(number, trivia)
