@@ -7,7 +7,7 @@ import br.com.andretortolano.data.exceptions.NoConnectivityException
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class NetworkCheckerInterceptor(private val context: Context) : Interceptor {
+internal class NetworkCheckerInterceptor(private val context: Context) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 

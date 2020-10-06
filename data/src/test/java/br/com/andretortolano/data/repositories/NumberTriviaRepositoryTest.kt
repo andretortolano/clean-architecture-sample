@@ -15,9 +15,8 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Test
-import java.net.UnknownHostException
 
-class NumberTriviaRepositoryTest {
+internal class NumberTriviaRepositoryTest {
 
     @MockK
     lateinit var remoteSource: RemoteSource

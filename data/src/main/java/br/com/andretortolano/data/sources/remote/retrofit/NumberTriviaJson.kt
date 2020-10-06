@@ -1,6 +1,6 @@
 package br.com.andretortolano.data.sources.remote.retrofit
 
-data class NumberTriviaJson(
+internal data class NumberTriviaJson(
     val text: String,
     val number: Long,
     val found: Boolean,

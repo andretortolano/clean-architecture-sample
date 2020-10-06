@@ -6,12 +6,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import br.com.andretortolano.data.repositories.NumberTriviaRepository
-import br.com.andretortolano.data.sources.local.FakeLocalSource
-import br.com.andretortolano.data.sources.remote.RetrofitRemoteSource
-import br.com.andretortolano.data.sources.remote.retrofit.RetrofitApiManager
+import br.com.andretortolano.data.DataModule
 import br.com.andretortolano.domain.usecase.GetNumberTrivia
 import br.com.andretortolano.domain.usecase.GetRandomNumberTrivia
+import br.com.andretortolano.numbers_trivia.BuildConfig
 import br.com.andretortolano.numbers_trivia.R
 import br.com.andretortolano.numbers_trivia.databinding.NumbersTriviaBinding
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaModel
@@ -47,10 +45,13 @@ class NumbersTriviaActivity : AppCompatActivity() {
 
     private fun getViewModel(): NumbersTriviaViewModel {
         // TODO replace for Hilt injection
-        val repository = NumberTriviaRepository(RetrofitRemoteSource(RetrofitApiManager.getInstance(applicationContext)), FakeLocalSource())
+        val dataModule = DataModule.Builder(applicationContext)
+            .setNumberTriviaApi("http://numbersapi.com/")
+            .build(BuildConfig.DEBUG)
+
         val model = NumbersTriviaModel(
-            GetNumberTrivia(repository),
-            GetRandomNumberTrivia(repository)
+            GetNumberTrivia(dataModule.numberTriviaGateway),
+            GetRandomNumberTrivia(dataModule.numberTriviaGateway)
         )
         return ViewModelProvider(this, NumbersTriviaViewModelFactory(model)).get(NumbersTriviaViewModel::class.java)
     }

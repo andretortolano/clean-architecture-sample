@@ -14,7 +14,7 @@ import org.junit.Test
 import retrofit2.Response
 import java.net.HttpURLConnection
 
-class RetrofitRemoteSourceTest {
+internal class RetrofitRemoteSourceTest {
 
     @MockK
     lateinit var numberTriviaRetrofit: NumberTriviaRetrofit

@@ -10,7 +10,7 @@ import br.com.andretortolano.domain.entity.ErrorEntity
 import br.com.andretortolano.domain.entity.NumberTriviaEntity
 import br.com.andretortolano.domain.gateway.NumberTriviaGateway
 
-class NumberTriviaRepository(private val remote: RemoteSource, private val local: LocalSource) : NumberTriviaGateway {
+internal class NumberTriviaRepository(private val remote: RemoteSource, private val local: LocalSource) : NumberTriviaGateway {
 
     override fun getNumberTrivia(number: Long): EntityResult<NumberTriviaEntity> {
         return try {

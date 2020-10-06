@@ -5,7 +5,7 @@ import br.com.andretortolano.data.models.NumberTriviaModel
 import br.com.andretortolano.data.sources.remote.retrofit.NumberTriviaJson
 import br.com.andretortolano.data.sources.remote.retrofit.NumberTriviaRetrofit
 
-class RetrofitRemoteSource(private val api: NumberTriviaRetrofit) : RemoteSource {
+internal class RetrofitRemoteSource(private val api: NumberTriviaRetrofit) : RemoteSource {
 
     override fun getConcreteNumberTrivia(number: Long): NumberTriviaModel {
         api.getConcreteNumberTrivia(number).execute().run {
