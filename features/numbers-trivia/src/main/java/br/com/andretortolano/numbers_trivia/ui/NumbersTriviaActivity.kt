@@ -36,21 +36,23 @@ class NumbersTriviaActivity : AppCompatActivity() {
         _binding = NumbersTriviaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel = getViewModel()
+        viewModel.state.observe(this, { renderState(it) })
+
+        binding.searchNumber
+            .setOnClickListener { viewModel.searchNumberTrivia(binding.number.text.toString().toLong()) }
+        binding.searchRandom
+            .setOnClickListener { viewModel.searchRandomTrivia() }
+    }
+
+    private fun getViewModel(): NumbersTriviaViewModel {
+        // TODO replace for Hilt injection
         val repository = NumberTriviaRepository(RetrofitRemoteSource(RetrofitApiManager.getInstance(applicationContext)), FakeLocalSource())
         val model = NumbersTriviaModel(
             GetNumberTrivia(repository),
             GetRandomNumberTrivia(repository)
         )
-
-        viewModel = ViewModelProvider(this, NumbersTriviaViewModelFactory(model)).get(NumbersTriviaViewModel::class.java)
-
-        viewModel.state.observe(this, { renderState(it) })
-
-        binding.searchNumber.setOnClickListener {
-            val number = Integer.valueOf(binding.number.text.toString())
-            viewModel.searchNumberTrivia(number)
-        }
-        binding.searchRandom.setOnClickListener { viewModel.searchRandomTrivia() }
+        return ViewModelProvider(this, NumbersTriviaViewModelFactory(model)).get(NumbersTriviaViewModel::class.java)
     }
 
     override fun onDestroy() {
@@ -64,6 +66,7 @@ class NumbersTriviaActivity : AppCompatActivity() {
             NumbersTriviaViewModel.ViewState.Loading -> renderLoadingState()
             is NumbersTriviaViewModel.ViewState.NumberTriviaFound -> renderFoundState(state)
             NumbersTriviaViewModel.ViewState.NumberTriviaNotFound -> renderNotFoundState()
+            NumbersTriviaViewModel.ViewState.NoConnection -> renderNoConnectivityState()
         }
     }
 
@@ -86,6 +89,11 @@ class NumbersTriviaActivity : AppCompatActivity() {
     private fun renderNotFoundState() {
         binding.trivia.text = getString(R.string.no_trivia_found)
         binding.trivia.visibility = View.VISIBLE
+        binding.triviaLoader.visibility = View.GONE
+    }
+
+    private fun renderNoConnectivityState() {
+        binding.trivia.text = getString(R.string.no_connection)
         binding.triviaLoader.visibility = View.GONE
     }
 }

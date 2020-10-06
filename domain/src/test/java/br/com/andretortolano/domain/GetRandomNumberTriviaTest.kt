@@ -1,5 +1,6 @@
 package br.com.andretortolano.domain
 
+import br.com.andretortolano.domain.entity.EntityResult
 import br.com.andretortolano.domain.entity.NumberTriviaEntity
 import br.com.andretortolano.domain.gateway.NumberTriviaGateway
 import br.com.andretortolano.domain.usecase.GetRandomNumberTrivia
@@ -27,12 +28,12 @@ class GetRandomNumberTriviaTest {
     @Test
     fun `SHOULD get random NumberTrivia from gateway`() {
         // Given
-        val numberTrivia = NumberTriviaEntity(1.toBigInteger(), "trivia test", true)
-        every { numberTriviaGateway.getRandomNumberTrivia() } returns numberTrivia
+        val result = EntityResult.Success(NumberTriviaEntity(1, "trivia test"))
+        every { numberTriviaGateway.getRandomNumberTrivia() } returns result
         // When
         val response = useCase()
         // Then
-        assertThat(response).isEqualTo(numberTrivia)
+        assertThat(response).isEqualTo(result)
     }
 }
 

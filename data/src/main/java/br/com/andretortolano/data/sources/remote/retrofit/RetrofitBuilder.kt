@@ -2,6 +2,7 @@ package br.com.andretortolano.data.sources.remote.retrofit
 
 import android.content.Context
 import com.google.gson.GsonBuilder
+import com.google.gson.LongSerializationPolicy
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

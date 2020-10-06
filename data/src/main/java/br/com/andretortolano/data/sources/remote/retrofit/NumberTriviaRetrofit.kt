@@ -7,8 +7,8 @@ import retrofit2.http.Path
 interface NumberTriviaRetrofit {
 
     @GET("{number}?json")
-    fun getConcreteNumberTrivia(@Path("number") number: Int): Call<NumberTriviaJson>
+    fun getConcreteNumberTrivia(@Path("number") number: Long): Call<NumberTriviaJson>
 
-    @GET("random?json")
+    @GET("random?json&min=${Long.MIN_VALUE}&max=${Long.MAX_VALUE}")
     fun getRandomNumberTrivia() : Call<NumberTriviaJson>
 }

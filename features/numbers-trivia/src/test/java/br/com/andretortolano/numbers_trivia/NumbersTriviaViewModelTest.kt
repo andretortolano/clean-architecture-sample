@@ -3,7 +3,8 @@ package br.com.andretortolano.numbers_trivia
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import br.com.andretortolano.data.exceptions.RemoteException
+import br.com.andretortolano.domain.entity.EntityResult
+import br.com.andretortolano.domain.entity.ErrorEntity
 import br.com.andretortolano.domain.entity.NumberTriviaEntity
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaModel
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaViewModel
@@ -62,20 +63,21 @@ class NumbersTriviaViewModelTest {
     }
 
     @Test
-    fun `SHOULD extend view model`() {
+    fun `class SHOULD extend view model`() {
         assertThat(viewModel).isInstanceOf(ViewModel::class.java)
     }
 
     @Test
-    fun `SHOULD start with Idle state`() {
+    fun `state SHOULD start as Idle`() {
         assertThat(stateList).hasSize(1)
         assertThat(stateList[0]).isInstanceOf(ViewState.Idle::class.java)
     }
 
     @Test
-    fun `SHOULD emmit Loading state WHEN searching any number trivia`() = runBlockingTest {
+    fun `searchNumberTrivia SHOULD emmit Loading state`() = runBlockingTest {
         // Given
-        coEvery { model.getConcreteNumberTriviaUseCase(any()) } returns mockk(relaxed = true)
+        val entityResult = EntityResult.Success(NumberTriviaEntity(10, ""))
+        coEvery { model.getConcreteNumberTriviaUseCase(any()) } returns entityResult
         // When
         viewModel.searchNumberTrivia(1)
         // Then
@@ -83,52 +85,14 @@ class NumbersTriviaViewModelTest {
     }
 
     @Test
-    fun `SHOULD emmit NumberTriviaFound state WITH correct NumberTrivia WHEN searching any number trivia`() = runBlockingTest {
+    fun `searchNumberTrivia SHOULD emmit NumberTriviaFound state WITH correct NumberTrivia`() = runBlockingTest {
         // Given
-        val number = 20
+        val number = 20L
         val trivia = "trivia"
-        val numberTrivia = NumberTriviaEntity(number.toBigInteger(), trivia, true)
-        coEvery { model.getConcreteNumberTriviaUseCase(number) } returns numberTrivia
+        val entityResult = EntityResult.Success(NumberTriviaEntity(number, trivia))
+        coEvery { model.getConcreteNumberTriviaUseCase(number) } returns entityResult
         // When
         viewModel.searchNumberTrivia(number)
-        // Then
-        (stateList[2] as ViewState.NumberTriviaFound).run {
-            assertThat(numberTrivia.number).isEqualTo(number.toBigInteger())
-            assertThat(numberTrivia.trivia).isEqualTo(trivia)
-        }
-    }
-
-    @Test
-    fun `SHOULD emmit NumberTriviaNotFound state WHEN entity is marked as not found`() = runBlockingTest {
-        // Given
-        val number = 20
-        val numberTrivia = NumberTriviaEntity(number.toBigInteger(), " ", false)
-        coEvery { model.getConcreteNumberTriviaUseCase(number) } returns numberTrivia
-        // When
-        viewModel.searchNumberTrivia(number)
-        // Then
-        assertThat(stateList[2]).isInstanceOf(ViewState.NumberTriviaNotFound::class.java)
-    }
-
-    @Test
-    fun `SHOULD emmit Loading state WHEN searching for random number trivia`() = runBlockingTest {
-        // Given
-        coEvery { model.getRandomNumberTriviaUseCase() } returns mockk(relaxed = true)
-        // When
-        viewModel.searchRandomTrivia()
-        // Then
-        assertThat(stateList[1]).isInstanceOf(ViewState.Loading::class.java)
-    }
-
-    @Test
-    fun `SHOULD emmit NumberTriviaFound state WITH correct NumberTrivia WHEN searching for random number trivia`() = runBlockingTest {
-        // Given
-        val number = 20.toBigInteger()
-        val trivia = "trivia"
-        val numberTrivia = NumberTriviaEntity(number, trivia, true)
-        coEvery { model.getRandomNumberTriviaUseCase() } returns numberTrivia
-        // When
-        viewModel.searchRandomTrivia()
         // Then
         (stateList[2] as ViewState.NumberTriviaFound).run {
             assertThat(numberTrivia.number).isEqualTo(number)
@@ -137,18 +101,77 @@ class NumbersTriviaViewModelTest {
     }
 
     @Test
-    fun `SHOULD emmit SomethingWentWrong state WHEN handling RemoteException_NoConnectivityException`() {
+    fun `searchNumberTrivia SHOULD emmit NumberTriviaNotFound state WHEN model returns ErrorEntity_NotFound`() = runBlockingTest {
+        // Given
+        val number = 20L
+        val entityResult = EntityResult.Error<NumberTriviaEntity>(ErrorEntity.NotFound)
+        coEvery { model.getConcreteNumberTriviaUseCase(number) } returns entityResult
         // When
-        viewModel.handleRemoteException(RemoteException.NoConnectivityException)
+        viewModel.searchNumberTrivia(number)
         // Then
-        assertThat(stateList[1]).isInstanceOf(ViewState.SomethingWentWrong::class.java)
+        assertThat(stateList[2]).isInstanceOf(ViewState.NumberTriviaNotFound::class.java)
     }
 
     @Test
-    fun `SHOULD emmit SomethingWentWrong state WHEN handling RemoteException_UnknownException`() = runBlockingTest {
+    fun `searchNumberTrivia SHOULD emmit NoConnection state WHEN model returns ErrorEntity_NoConnectivity`() = runBlockingTest {
+        // Given
+        val number = 20L
+        val entityResult = EntityResult.Error<NumberTriviaEntity>(ErrorEntity.NoConnectivity)
+        coEvery { model.getConcreteNumberTriviaUseCase(number) } returns entityResult
         // When
-        viewModel.handleRemoteException(RemoteException.UnknownRemoteException)
+        viewModel.searchNumberTrivia(number)
         // Then
-        assertThat(stateList[1]).isInstanceOf(ViewState.SomethingWentWrong::class.java)
+        assertThat(stateList[2]).isInstanceOf(ViewState.NoConnection::class.java)
     }
+
+    @Test
+    fun `searchRandomTrivia SHOULD emmit Loading state`() = runBlockingTest {
+        // Given
+        val entityResult = EntityResult.Success(NumberTriviaEntity(10, ""))
+        coEvery { model.getRandomNumberTriviaUseCase() } returns entityResult
+        // When
+        viewModel.searchRandomTrivia()
+        // Then
+        assertThat(stateList[1]).isInstanceOf(ViewState.Loading::class.java)
+    }
+
+    @Test
+    fun `searchRandomTrivia SHOULD emmit NumberTriviaFound state WITH correct NumberTrivia`() =
+        runBlockingTest {
+            // Given
+            val number = 20L
+            val trivia = "trivia"
+            val entityResult = EntityResult.Success(NumberTriviaEntity(number, trivia))
+            coEvery { model.getRandomNumberTriviaUseCase() } returns entityResult
+            // When
+            viewModel.searchRandomTrivia()
+            // Then
+            (stateList[2] as ViewState.NumberTriviaFound).run {
+                assertThat(numberTrivia.number).isEqualTo(number)
+                assertThat(numberTrivia.trivia).isEqualTo(trivia)
+            }
+        }
+
+    @Test
+    fun `searchRandomTrivia SHOULD emmit NoConnection state WHEN model returns ErrorEntity_NoConnectivity`() = runBlockingTest {
+        // Given
+        val entityResult = EntityResult.Error<NumberTriviaEntity>(ErrorEntity.NoConnectivity)
+        coEvery { model.getRandomNumberTriviaUseCase() } returns entityResult
+        // When
+        viewModel.searchRandomTrivia()
+        // Then
+        assertThat(stateList[2]).isInstanceOf(ViewState.NoConnection::class.java)
+    }
+
+    @Test
+    fun `searchRandomTrivia SHOULD emmit NumberTriviaNotFound state WHEN model returns ErrorEntity_NotFound`() = runBlockingTest {
+        // Given
+        val entityResult = EntityResult.Error<NumberTriviaEntity>(ErrorEntity.NotFound)
+        coEvery { model.getRandomNumberTriviaUseCase() } returns entityResult
+        // When
+        viewModel.searchRandomTrivia()
+        // Then
+        assertThat(stateList[2]).isInstanceOf(ViewState.NumberTriviaNotFound::class.java)
+    }
+
 }

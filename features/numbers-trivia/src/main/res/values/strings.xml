@@ -4,5 +4,6 @@
     <string name="search_number">Search Number</string>
     <string name="number">Number</string>
     <string name="no_trivia_found">No trivia found for this number</string>
+    <string name="no_connection">No Connection to the internet</string>
 
 </resources>

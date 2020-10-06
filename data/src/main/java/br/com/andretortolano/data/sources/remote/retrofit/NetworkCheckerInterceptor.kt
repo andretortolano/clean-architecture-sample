@@ -3,7 +3,7 @@ package br.com.andretortolano.data.sources.remote.retrofit
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import br.com.andretortolano.data.exceptions.RemoteException
+import br.com.andretortolano.data.exceptions.NoConnectivityException
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -12,7 +12,7 @@ class NetworkCheckerInterceptor(private val context: Context) : Interceptor {
         val request = chain.request()
 
         if (isNotConnected()) {
-            throw RemoteException.NoConnectivityException
+            throw NoConnectivityException()
         }
 
         return chain.proceed(request)
