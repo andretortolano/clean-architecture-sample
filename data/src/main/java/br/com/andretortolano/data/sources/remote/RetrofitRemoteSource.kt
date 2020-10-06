@@ -9,21 +9,21 @@ class RetrofitRemoteSource(private val api: NumberTriviaRetrofit) : RemoteSource
 
     override fun getConcreteNumberTrivia(number: Long): NumberTriviaModel {
         api.getConcreteNumberTrivia(number).execute().run {
-            return body()?.let {
+            body()?.let {
                 if (it.found) {
-                    it.toModel()
-                } else {
-                    throw NotFoundException()
+                    return it.toModel()
                 }
-            } ?: throw NotFoundException()
+            }
+            throw NotFoundException()
         }
     }
 
     override fun getRandomNumberTrivia(): NumberTriviaModel {
         api.getRandomNumberTrivia().execute().run {
-            return body()?.let {
-                it.toModel()
-            } ?: throw NotFoundException()
+            body()?.let {
+                return it.toModel()
+            }
+            throw NotFoundException()
         }
     }
 

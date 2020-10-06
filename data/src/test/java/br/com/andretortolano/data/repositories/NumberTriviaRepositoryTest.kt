@@ -166,44 +166,5 @@ class NumberTriviaRepositoryTest {
             assertThat(it.error).isInstanceOf(ErrorEntity.NotFound::class.java)
         }
     }
-
-//    @Test
-//    fun `getRandomNumberTrivia SHOULD save to local WHEN getting from remote`() {
-//        // Given
-//        val number = 1337L
-//        val randomNumberTrivia = NumberTriviaModel(number, "trivia")
-//        every { remoteSource.getRandomNumberTrivia() } returns randomNumberTrivia
-//        every { localSource.saveNumberTrivia(randomNumberTrivia) } just Runs
-//        // When
-//        repository.getRandomNumberTrivia()
-//        // Then
-//        verify(exactly = 1) {
-//            localSource.saveNumberTrivia(randomNumberTrivia)
-//        }
-//    }
-//
-//    @Test
-//    fun `getRandomNumberTrivia SHOULD return error WHEN catching NoConnectivityException`() {
-//        // Given
-//        every { remoteSource.getRandomNumberTrivia() } throws NoConnectivityException()
-//        // When
-//        val result = repository.getRandomNumberTrivia()
-//        // Then
-//        (result as EntityResult.Error).also {
-//            assertThat(it.error).isInstanceOf(ErrorEntity.NoConnectivity::class.java)
-//        }
-//    }
-//
-//    @Test
-//    fun `getRandomNumberTrivia SHOULD return error WHEN catching NotFoundException`() {
-//        // Given
-//        every { remoteSource.getRandomNumberTrivia() } throws NotFoundException()
-//        // When
-//        val result = repository.getRandomNumberTrivia()
-//        // Then
-//        (result as EntityResult.Error).also {
-//            assertThat(it.error).isInstanceOf(ErrorEntity.NotFound::class.java)
-//        }
-//    }
 }
 
