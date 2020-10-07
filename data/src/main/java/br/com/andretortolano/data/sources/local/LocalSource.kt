@@ -5,5 +5,5 @@ import br.com.andretortolano.data.models.NumberTriviaModel
 interface LocalSource {
     fun getNumberTrivia(number: Long): NumberTriviaModel?
 
-    fun saveNumberTrivia(expectedNumberTrivia: NumberTriviaModel)
+    fun saveNumberTrivia(numberTrivia: NumberTriviaModel)
 }

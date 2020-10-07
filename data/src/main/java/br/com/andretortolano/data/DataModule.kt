@@ -1,9 +1,13 @@
 package br.com.andretortolano.data
 
 import android.content.Context
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import br.com.andretortolano.data.repositories.NumberTriviaRepository
 import br.com.andretortolano.data.sources.local.FakeLocalSource
 import br.com.andretortolano.data.sources.local.LocalSource
+import br.com.andretortolano.data.sources.local.RoomLocalSource
+import br.com.andretortolano.data.sources.local.room.ModuleDataBase
 import br.com.andretortolano.data.sources.remote.RemoteSource
 import br.com.andretortolano.data.sources.remote.RetrofitRemoteSource
 import br.com.andretortolano.data.sources.remote.retrofit.NetworkCheckerInterceptor
@@ -41,7 +45,7 @@ class DataModule private constructor(
 
         fun build(isDebug: Boolean = false): DataModule {
             val remoteSource = getRemoteSource(isDebug)
-            val localSource = getLocalSource()
+            val localSource = getLocalSource(isDebug)
 
             return DataModule(NumberTriviaRepository(remoteSource, localSource))
         }
@@ -58,11 +62,11 @@ class DataModule private constructor(
             }
         }
 
-        private fun getLocalSource(): LocalSource {
+        private fun getLocalSource(isDebug: Boolean): LocalSource {
             return if (customLocalSource != null) {
                 customLocalSource!!
             } else {
-                FakeLocalSource()
+                RoomLocalSource(getRoomBuilder(isDebug))
             }
         }
 
@@ -85,9 +89,14 @@ class DataModule private constructor(
         }
 
         private fun getNumberTriviaRetrofit(retrofitBuilder: Retrofit.Builder, url: String) = retrofitBuilder
-            .baseUrl(numberTriviaApiUrl)
+            .baseUrl(url)
             .build()
             .create(NumberTriviaRetrofit::class.java)
+
+        private fun getRoomBuilder(isDebug: Boolean): ModuleDataBase {
+            return Room.databaseBuilder(context, ModuleDataBase::class.java, ModuleDataBase.DATABASE_NAME)
+                .build()
+        }
     }
 
     class ApiUrlNotDefinedException(api: String) : RuntimeException("Api url not defined for $api")

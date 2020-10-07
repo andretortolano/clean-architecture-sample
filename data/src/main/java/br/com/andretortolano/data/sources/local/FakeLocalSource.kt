@@ -7,7 +7,7 @@ class FakeLocalSource: LocalSource {
         return null
     }
 
-    override fun saveNumberTrivia(expectedNumberTrivia: NumberTriviaModel) {
+    override fun saveNumberTrivia(numberTrivia: NumberTriviaModel) {
         return
     }
 }
