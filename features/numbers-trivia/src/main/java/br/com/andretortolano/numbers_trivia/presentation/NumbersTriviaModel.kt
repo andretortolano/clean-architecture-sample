@@ -6,8 +6,9 @@ import br.com.andretortolano.domain.usecase.GetNumberTrivia
 import br.com.andretortolano.domain.usecase.GetRandomNumberTrivia
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class NumbersTriviaModel(
+class NumbersTriviaModel @Inject constructor(
     private val getConcreteNumberTrivia: GetNumberTrivia,
     private val getRandomNumberTrivia: GetRandomNumberTrivia
 ) {

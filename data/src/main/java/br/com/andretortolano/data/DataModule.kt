@@ -2,9 +2,7 @@ package br.com.andretortolano.data
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import br.com.andretortolano.data.repositories.NumberTriviaRepository
-import br.com.andretortolano.data.sources.local.FakeLocalSource
 import br.com.andretortolano.data.sources.local.LocalSource
 import br.com.andretortolano.data.sources.local.RoomLocalSource
 import br.com.andretortolano.data.sources.local.room.ModuleDataBase
@@ -27,8 +25,6 @@ class DataModule private constructor(
         private var numberTriviaApiUrl: String? = null
         private var customRemoteSource: RemoteSource? = null
         private var customLocalSource: LocalSource? = null
-
-        private lateinit var numberTriviaRetrofit: Retrofit
 
         fun setNumberTriviaApi(url: String) = apply {
             numberTriviaApiUrl = url
@@ -94,8 +90,13 @@ class DataModule private constructor(
             .create(NumberTriviaRetrofit::class.java)
 
         private fun getRoomBuilder(isDebug: Boolean): ModuleDataBase {
-            return Room.databaseBuilder(context, ModuleDataBase::class.java, ModuleDataBase.DATABASE_NAME)
-                .build()
+            return if(isDebug) {
+                Room.inMemoryDatabaseBuilder(context, ModuleDataBase::class.java)
+                    .build()
+            } else {
+                Room.databaseBuilder(context, ModuleDataBase::class.java, ModuleDataBase.DATABASE_NAME)
+                    .build()
+            }
         }
     }
 

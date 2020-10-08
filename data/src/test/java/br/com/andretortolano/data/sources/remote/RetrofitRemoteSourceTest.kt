@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import okhttp3.ResponseBody
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
@@ -51,7 +52,7 @@ internal class RetrofitRemoteSourceTest {
         // Given
         every {
             numberTriviaRetrofit.getConcreteNumberTrivia(any()).execute()
-        } returns Response.error(HttpURLConnection.HTTP_INTERNAL_ERROR, mockk())
+        } returns Response.error(HttpURLConnection.HTTP_INTERNAL_ERROR, mockk(relaxed = true))
         // When
         source.getConcreteNumberTrivia(1)
     }
@@ -84,7 +85,7 @@ internal class RetrofitRemoteSourceTest {
         // Given
         every {
             numberTriviaRetrofit.getRandomNumberTrivia().execute()
-        } returns Response.error(HttpURLConnection.HTTP_INTERNAL_ERROR, mockk())
+        } returns Response.error(HttpURLConnection.HTTP_INTERNAL_ERROR, mockk(relaxed = true))
         // When
         source.getRandomNumberTrivia()
     }

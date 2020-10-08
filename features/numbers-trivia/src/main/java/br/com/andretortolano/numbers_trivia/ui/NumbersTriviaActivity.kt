@@ -5,16 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import br.com.andretortolano.data.DataModule
-import br.com.andretortolano.domain.usecase.GetNumberTrivia
-import br.com.andretortolano.domain.usecase.GetRandomNumberTrivia
-import br.com.andretortolano.numbers_trivia.BuildConfig
 import br.com.andretortolano.numbers_trivia.R
 import br.com.andretortolano.numbers_trivia.databinding.NumbersTriviaBinding
-import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaModel
+import br.com.andretortolano.numbers_trivia.di.DaggerFeatureComponent
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaViewModel
 import br.com.andretortolano.numbers_trivia.presentation.NumbersTriviaViewModelFactory
+import br.com.andretortolano.shared.di.SharedComponent
+import dagger.hilt.android.EntryPointAccessors
+import javax.inject.Inject
 
 class NumbersTriviaActivity : AppCompatActivity() {
 
@@ -24,36 +22,32 @@ class NumbersTriviaActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var viewModel: NumbersTriviaViewModel
+    @Inject
+    lateinit var viewModelFactory: NumbersTriviaViewModelFactory
+
+    private val viewModel by lazy { viewModelFactory.getViewModel(this) }
 
     private var _binding: NumbersTriviaBinding? = null
     private val binding get() = _binding!!
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        DaggerFeatureComponent.builder()
+            .context(this)
+            .featureDependencies(EntryPointAccessors.fromApplication(applicationContext, SharedComponent::class.java))
+            .build()
+            .inject(this)
+
         super.onCreate(savedInstanceState)
         _binding = NumbersTriviaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = getViewModel()
         viewModel.state.observe(this, { renderState(it) })
 
         binding.searchNumber
             .setOnClickListener { viewModel.searchNumberTrivia(binding.number.text.toString().toLong()) }
         binding.searchRandom
             .setOnClickListener { viewModel.searchRandomTrivia() }
-    }
-
-    private fun getViewModel(): NumbersTriviaViewModel {
-        // TODO replace for Hilt injection
-        val dataModule = DataModule.Builder(applicationContext)
-            .setNumberTriviaApi("http://numbersapi.com/")
-            .build(BuildConfig.DEBUG)
-
-        val model = NumbersTriviaModel(
-            GetNumberTrivia(dataModule.numberTriviaGateway),
-            GetRandomNumberTrivia(dataModule.numberTriviaGateway)
-        )
-        return ViewModelProvider(this, NumbersTriviaViewModelFactory(model)).get(NumbersTriviaViewModel::class.java)
     }
 
     override fun onDestroy() {

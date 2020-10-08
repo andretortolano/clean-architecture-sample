@@ -10,7 +10,9 @@ import br.com.andretortolano.domain.entity.NumberTriviaEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class NumbersTriviaViewModel(private val model: NumbersTriviaModel) : ViewModel() {
+class NumbersTriviaViewModel constructor(
+    private val model: NumbersTriviaModel
+) : ViewModel() {
 
     sealed class ViewState {
         object Idle : ViewState()
@@ -42,9 +44,9 @@ class NumbersTriviaViewModel(private val model: NumbersTriviaModel) : ViewModel(
     }
 
     private fun EntityResult<NumberTriviaEntity>.toViewState(): ViewState {
-        return when(this) {
+        return when (this) {
             is EntityResult.Success -> ViewState.NumberTriviaFound(data)
-            is EntityResult.Error -> when(error) {
+            is EntityResult.Error -> when (error) {
                 ErrorEntity.NoConnectivity -> ViewState.NoConnection
                 ErrorEntity.NotFound -> ViewState.NumberTriviaNotFound
             }
