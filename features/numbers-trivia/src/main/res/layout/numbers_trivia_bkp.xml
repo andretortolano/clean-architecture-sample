@@ -4,69 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0073B0"
+    android:background="#E9EFEF"
+    android:padding="16dp"
     tools:context=".ui.NumbersTriviaActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/appCompatImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="150dp"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_number_trivia"
-        app:tint="#FFF" />
-
-    <View
-        android:id="@+id/view_container_background"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/background_rounded_corner_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <include
-        android:id="@+id/include_loading_container"
-        layout="@layout/numbers_trivia_loading"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/search_number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
-
-    <include
-        android:id="@+id/include_content_container"
-        layout="@layout/numbers_trivia_content_found"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/search_number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
-
     <androidx.cardview.widget.CardView
-        android:id="@+id/card_view_container_search_number"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toTopOf="@+id/search_number"
-        app:layout_constraintEnd_toEndOf="@id/view_container_background"
-        app:layout_constraintStart_toStartOf="@id/view_container_background"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -82,7 +31,7 @@
                 android:fontFamily="@font/roboto_condensed_bold"
                 android:gravity="center"
                 android:text="Curiosidade sobre os números"
-                android:textColor="#0073B0"
+                android:textColor="#0F0F0F"
                 android:textSize="22sp" />
 
             <TextView
@@ -92,7 +41,7 @@
                 android:fontFamily="@font/roboto_condensed_regular"
                 android:gravity="center"
                 android:text="Digite um número e descubra uma curiosidade sobre ele."
-                android:textColor="#090A0B"
+                android:textColor="#A8ACAF"
                 android:textSize="18sp" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -122,12 +71,13 @@
 
     </androidx.cardview.widget.CardView>
 
+
     <Button
         android:id="@+id/search_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="#0572B1"
+        android:backgroundTint="#517DEF"
         android:fontFamily="@font/roboto_condensed_bold"
         android:text="@string/search_number"
         android:textColor="#F4F7FF"
@@ -142,7 +92,6 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
         android:fontFamily="@font/roboto_condensed_bold"
         android:text="@string/search_random"
         android:textColor="#0F0F0F"
@@ -151,6 +100,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="#0572B1" />
+        app:strokeColor="#517DEF" />
+
+    <ProgressBar
+        android:id="@+id/trivia_loader"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

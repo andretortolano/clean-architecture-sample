@@ -1,6 +1,6 @@
 <resources>
     <string name="number_trivia_title">Numbers Trivia</string>
-    <string name="search_random">Search Random</string>
+    <string name="search_random">Randomize</string>
     <string name="search_number">Search Number</string>
     <string name="number">Number</string>
     <string name="no_trivia_found">No trivia found for this number</string>

@@ -66,29 +66,39 @@ class NumbersTriviaActivity : AppCompatActivity() {
     }
 
     private fun renderIdleState() {
-        binding.trivia.visibility = View.GONE
-        binding.triviaLoader.visibility = View.GONE
+//        binding.trivia.visibility = View.GONE
+//        binding.triviaLoader.visibility = View.GONE
     }
 
     private fun renderLoadingState() {
-        binding.trivia.visibility = View.GONE
-        binding.triviaLoader.visibility = View.VISIBLE
+        binding.cardViewContainerSearchNumber.visibility = View.GONE
+        binding.searchNumber.visibility = View.GONE
+        binding.searchRandom.visibility = View.GONE
+        binding.includeLoadingContainer.loadingContainer.visibility = View.VISIBLE
+//        binding.trivia.visibility = View.GONE
+//        binding.triviaLoader.visibility = View.VISIBLE
     }
 
     private fun renderFoundState(state: NumbersTriviaViewModel.ViewState.NumberTriviaFound) {
-        binding.trivia.text = state.numberTrivia.trivia
-        binding.trivia.visibility = View.VISIBLE
-        binding.triviaLoader.visibility = View.GONE
+        binding.cardViewContainerSearchNumber.visibility = View.GONE
+        binding.searchNumber.visibility = View.GONE
+        binding.searchRandom.visibility = View.GONE
+        binding.includeLoadingContainer.loadingContainer.visibility = View.GONE
+        binding.includeContentContainer.numberContentFound.text = state.numberTrivia.trivia
+        binding.includeContentContainer.numberContentContainer.visibility = View.VISIBLE
+//        binding.trivia.text = state.numberTrivia.trivia
+//        binding.trivia.visibility = View.VISIBLE
+//        binding.triviaLoader.visibility = View.GONE
     }
 
     private fun renderNotFoundState() {
-        binding.trivia.text = getString(R.string.no_trivia_found)
-        binding.trivia.visibility = View.VISIBLE
-        binding.triviaLoader.visibility = View.GONE
+//        binding.trivia.text = getString(R.string.no_trivia_found)
+//        binding.trivia.visibility = View.VISIBLE
+//        binding.triviaLoader.visibility = View.GONE
     }
 
     private fun renderNoConnectivityState() {
-        binding.trivia.text = getString(R.string.no_connection)
-        binding.triviaLoader.visibility = View.GONE
+//        binding.trivia.text = getString(R.string.no_connection)
+//        binding.triviaLoader.visibility = View.GONE
     }
 }
